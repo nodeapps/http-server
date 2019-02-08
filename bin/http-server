@@ -33,6 +33,7 @@ if (argv.h || argv.help) {
     '  -U --utc     Use UTC time format in log messages.',
     '',
     '  -P --proxy   Fallback proxy if the request cannot be resolved. e.g.: http://someurl.com',
+    '  -R           Path for which proxy is enabled. e.g.: /api/ [none]',
     '',
     '  -S --ssl     Enable https.',
     '  -C --cert    Path to ssl cert file (default: cert.pem).',
@@ -103,6 +104,7 @@ function listen(port) {
     ext: argv.e || argv.ext,
     logFn: logger.request,
     proxy: proxy,
+    proxyPath: argv.R,
     showDotfiles: argv.dotfiles
   };
 

@@ -59,6 +59,8 @@ Using `npx` you can run the script without installing it first:
 
 `-P` or `--proxy` Proxies all requests which can't be resolved locally to the given url. e.g.: -P http://someurl.com
 
+`-R` Path for which proxy is enabled. e.g.: -U /api/
+
 `-S` or `--ssl` Enable https.
 
 `-C` or `--cert` Path to ssl cert file (default: `cert.pem`).
