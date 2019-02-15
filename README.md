@@ -57,6 +57,8 @@ Using `npx` you can run the script without installing it first:
 
 `-U` or `--utc` Use UTC time format in log messages.
 
+`-H` or `--header` Add custom headers.  Format is `-H=header:value`.  Specify `-H` multiple times to set multiple headers.
+
 `-P` or `--proxy` Proxies all requests which can't be resolved locally to the given url. e.g.: -P http://someurl.com
 
 `-S` or `--ssl` Enable https.
