@@ -1,19 +1,21 @@
 #!/usr/bin/env node
 
-'use strict';
-
+// FIXME disabling because eslint should be allowing this
+/* eslint-disable indent */
 var colors     = require('colors/safe'),
     os         = require('os'),
     httpServer = require('../lib/http-server'),
     portfinder = require('portfinder'),
     opener     = require('opener'),
-    argv       = require('optimist')
-      .boolean('cors')
-      .argv;
+    optimist   = require('optimist');
+/* eslint-enable indent */
+
+var argv = optimist.boolean('cors').argv;
 
 var ifaces = os.networkInterfaces();
 
 if (argv.h || argv.help) {
+  /* eslint-disable no-process-exit, no-console */
   console.log([
     'usage: http-server [path] [options]',
     '',
@@ -43,14 +45,18 @@ if (argv.h || argv.help) {
     '  -h --help    Print this list and exit.'
   ].join('\n'));
   process.exit();
+  /* eslint-enable no-process-exit, no-console */
 }
 
+// FIXME disabling because eslint should be allowing this
+/* eslint-disable indent, no-process-env */
 var port = argv.p || argv.port || parseInt(process.env.PORT, 10),
     host = argv.a || '0.0.0.0',
     ssl = !!argv.S || !!argv.ssl,
     proxy = argv.P || argv.proxy,
     utc = argv.U || argv.utc,
     logger;
+/* eslint-enable indent, no-process-env */
 
 if (!argv.s && !argv.silent) {
   logger = {
@@ -63,8 +69,7 @@ if (!argv.s && !argv.silent) {
           date, colors.red(req.method), colors.red(req.url),
           colors.red(error.status.toString()), colors.red(error.message)
         );
-      }
-      else {
+      } else {
         logger.info(
           '[%s] "%s %s" "%s"',
           date, colors.cyan(req.method), colors.cyan(req.url),
@@ -73,8 +78,7 @@ if (!argv.s && !argv.silent) {
       }
     }
   };
-}
-else if (colors) {
+} else if (colors) {
   logger = {
     info: function () {},
     request: function () {}
@@ -87,8 +91,7 @@ if (!port) {
     if (err) { throw err; }
     listen(port);
   });
-}
-else {
+} else {
   listen(port);
 }
 
@@ -122,19 +125,20 @@ function listen(port) {
 
   var server = httpServer.createServer(options);
   server.listen(port, host, function () {
+    /* eslint-disable indent */
     var canonicalHost = host === '0.0.0.0' ? '127.0.0.1' : host,
         protocol      = ssl ? 'https://' : 'http://';
 
     logger.info([colors.yellow('Starting up http-server, serving '),
-      colors.cyan(server.root),
-      ssl ? (colors.yellow(' through') + colors.cyan(' https')) : '',
-      colors.yellow('\nAvailable on:')
-    ].join(''));
+                 colors.cyan(server.root),
+                 ssl ? (colors.yellow(' through') + colors.cyan(' https')) : '',
+                 colors.yellow('\nAvailable on:')
+                ].join(''));
+    /* eslint-enable indent */
 
     if (argv.a && host !== '0.0.0.0') {
       logger.info(('  ' + protocol + canonicalHost + ':' + colors.green(port.toString())));
-    }
-    else {
+    } else {
       Object.keys(ifaces).forEach(function (dev) {
         ifaces[dev].forEach(function (details) {
           if (details.family === 'IPv4') {
