@@ -67,6 +67,8 @@ Using `npx` you can run the script without installing it first:
 
 `-r` or `--robots` Provide a /robots.txt (whose content defaults to `User-agent: *\nDisallow: /`)
 
+`--middleware` Support custom [union](https://www.npmjs.com/package/union) middleware. if you pass `returnIndex`, the http-server will serve `index.html` for all requests except static. For example, `--middleware=returnIndex`. `--middleware=mw1.js --middleware=mw2.js`
+
 `-h` or `--help` Print this list and exit.
 
 ## Magic Files
