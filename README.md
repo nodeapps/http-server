@@ -75,6 +75,18 @@ Using `npx` you can run the script without installing it first:
 
 `-r` or `--robots` Provide a /robots.txt (whose content defaults to `User-agent: *\nDisallow: /`)
 
+`-m` or `--middleware` Provide a filepath (single or multiple file paths through multiple '-m or --middleware' parameters) to a JS file that exports a function to be used as middleware for each request before anything else happens (or any other middleware is called). e.g. `./my_middldeware.js`
+
+```js
+// my_middldeware.js
+module.exports = function(req, res, next) {
+  console.log('This was a request to the server!');
+
+  // same as res.emit('next');, which goes to the next middleware
+  next();
+}
+```
+
 `-h` or `--help` Print this list and exit.
 
 ## Magic Files
