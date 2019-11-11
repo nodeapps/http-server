@@ -2,15 +2,15 @@
 
 'use strict';
 
-var colors     = require('colors/safe'),
-    os         = require('os'),
-    httpServer = require('../lib/http-server'),
-    portfinder = require('portfinder'),
-    opener     = require('opener'),
-    argv       = require('optimist')
-      .boolean('cors')
-      .boolean('log-ip')
-      .argv;
+var colors = require('colors/safe'),
+  os = require('os'),
+  httpServer = require('../lib/http-server'),
+  portfinder = require('portfinder'),
+  opener = require('opener'),
+  argv = require('optimist')
+    .boolean('cors')
+    .boolean('log-ip')
+    .argv;
 
 var ifaces = os.networkInterfaces();
 
@@ -24,6 +24,7 @@ if (argv.h || argv.help) {
     '  -p --port    Port to use [8080]',
     '  -a           Address to use [0.0.0.0]',
     '  -d           Show directory listings [true]',
+    '  -b --base-dir   Base directory to serve files from [/]',
     '  -i           Display autoIndex [true]',
     '  -g --gzip    Serve gzip files when possible [false]',
     '  -b --brotli  Serve brotli files when possible [false]',
@@ -60,11 +61,12 @@ if (argv.h || argv.help) {
 }
 
 var port = argv.p || argv.port || parseInt(process.env.PORT, 10),
-    host = argv.a || '0.0.0.0',
-    ssl = !!argv.S || !!argv.ssl,
-    proxy = argv.P || argv.proxy,
-    utc = argv.U || argv.utc,
-    logger;
+  host = argv.a || '0.0.0.0',
+  ssl = !!argv.S || !!argv.ssl,
+  proxy = argv.P || argv.proxy,
+  utc = argv.U || argv.utc,
+  baseDir = argv.b || argv['base-dir'],
+  logger;
 
 if (!argv.s && !argv.silent) {
   logger = {
@@ -72,8 +74,8 @@ if (!argv.s && !argv.silent) {
     request: function (req, res, error) {
       var date = utc ? new Date().toUTCString() : new Date();
       var ip = argv['log-ip']
-          ? req.headers['x-forwarded-for'] || '' +  req.connection.remoteAddress
-          : '';
+        ? req.headers['x-forwarded-for'] || '' + req.connection.remoteAddress
+        : '';
       if (error) {
         logger.info(
           '[%s] %s "%s %s" Error (%s): "%s"',
@@ -93,8 +95,8 @@ if (!argv.s && !argv.silent) {
 }
 else if (colors) {
   logger = {
-    info: function () {},
-    request: function () {}
+    info: function () { },
+    request: function () { }
   };
 }
 
@@ -115,6 +117,7 @@ function listen(port) {
     cache: argv.c,
     timeout: argv.t,
     showDir: argv.d,
+    baseDir: baseDir,
     autoIndex: argv.i,
     gzip: argv.g || argv.gzip,
     brotli: argv.b || argv.brotli,
@@ -144,22 +147,23 @@ function listen(port) {
   var server = httpServer.createServer(options);
   server.listen(port, host, function () {
     var canonicalHost = host === '0.0.0.0' ? '127.0.0.1' : host,
-        protocol      = ssl ? 'https://' : 'http://';
+      protocol = ssl ? 'https://' : 'http://',
+      path = baseDir ? '/' + baseDir.replace(/^\//, '') : '';
 
     logger.info([colors.yellow('Starting up http-server, serving '),
-      colors.cyan(server.root),
-      ssl ? (colors.yellow(' through') + colors.cyan(' https')) : '',
-      colors.yellow('\nAvailable on:')
+    colors.cyan(server.root),
+    ssl ? (colors.yellow(' through') + colors.cyan(' https')) : '',
+    colors.yellow('\nAvailable on:')
     ].join(''));
 
     if (argv.a && host !== '0.0.0.0') {
-      logger.info(('  ' + protocol + canonicalHost + ':' + colors.green(port.toString())));
+      logger.info(('  ' + protocol + canonicalHost + ':' + colors.green(port.toString()) + path));
     }
     else {
       Object.keys(ifaces).forEach(function (dev) {
         ifaces[dev].forEach(function (details) {
           if (details.family === 'IPv4') {
-            logger.info(('  ' + protocol + details.address + ':' + colors.green(port.toString())));
+            logger.info(('  ' + protocol + details.address + ':' + colors.green(port.toString()) + path));
           }
         });
       });
