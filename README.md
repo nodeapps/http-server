@@ -70,6 +70,8 @@ Using `npx` you can run the script without installing it first:
 
 `-P` or `--proxy` Proxies all requests which can't be resolved locally to the given url. e.g.: -P http://someurl.com
 
+`--proxy-options` Pass proxy [options](https://github.com/http-party/node-http-proxy#options) using nested dotted objects. e.g.: --proxy-options.secure false
+
 `--username` Username for basic authentication [none]
 
 `--password` Password for basic authentication [none]
