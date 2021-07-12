@@ -6,6 +6,7 @@ node_js:
   - "12"
   - "13"
   - "14"
+  - "16"
 
 git:
   autocrlf: input
@@ -14,8 +15,10 @@ os:
   - linux
   - windows
   - osx
+  - freebsd
 
 before_install:
+  - npm cache clean
   - travis_retry npm install
 
 script:
